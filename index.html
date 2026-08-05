@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>➗ Rational Expressions Exam</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        body.en-mode { font-family: 'Inter', sans-serif; }
+        .correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+        .incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+        .formula { font-family: 'Times New Roman', serif; letter-spacing: 0.5px; direction: ltr; display: inline-block; font-style: italic; }
+        .timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { opacity: 0.7; } }
+        @media print { .no-print { display: none !important; } }
+        .success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+        .grade-excellent { background: #dcfce7; color: #166534; }
+        .grade-good { background: #fef3c7; color: #92400e; }
+        .grade-pass { background: #dbeafe; color: #1e40af; }
+        .grade-fail { background: #fee2e2; color: #991b1b; }
+        .lang-switch {
+            position: fixed; top: 16px; left: 16px; z-index: 100;
+            background: white; padding: 6px; border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px;
+            border: 2px solid #0891b2;
+        }
+        [dir="ltr"] .lang-switch { left: auto; right: 16px; }
+        .lang-btn {
+            padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
+            transition: all 0.3s; border: none; font-size: 0.875rem;
+            background: transparent; color: #6b7280;
+        }
+        .lang-btn.active { background: #0891b2; color: white; box-shadow: 0 2px 6px rgba(8,145,178,0.4); }
+        .lang-btn:hover:not(.active) { background: #ecfeff; color: #0891b2; }
+        .shuffle-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        .svg-graph {
+            display: block;
+            margin: 12px auto;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .graph-container {
+            text-align: center;
+            margin: 10px 0;
+        }
+        .math-display {
+            display: inline-block;
+            direction: ltr;
+            font-family: 'Times New Roman', 'Cambria Math', serif;
+            font-size: 1.15em;
+            font-style: italic;
+            padding: 2px 6px;
+            background: #ecfeff;
+            border-radius: 4px;
+            margin: 2px;
+            color: #155e75;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 md:p-8 min-h-screen">
+
+    <div class="lang-switch no-print">
+        <button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+        <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+    </div>
+
+    <div id="timer-container" class="max-w-4xl mx-auto mb-4 text-center no-print">
+        <div class="bg-white p-4 rounded-xl shadow-md inline-block border-2 border-cyan-100">
+            <span class="text-gray-600 ml-2" data-ar="⏱️ الوقت المتبقي:" data-en="⏱️ Time Remaining:">⏱️ الوقت المتبقي:</span>
+            <span id="timer" class="text-2xl font-bold text-cyan-600 font-mono">60:00</span>
+            <span class="shuffle-badge" data-ar="🔀 أسئلة عشوائية" data-en="🔀 Random Questions">🔀 أسئلة عشوائية</span>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+        <button onclick="toggleAnswers()" class="bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="👁️ إظهار / إخفاء الإجابات" data-en="👁️ Show / Hide Answers">👁️ إظهار / إخفاء الإجابات</button>
+        <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="🖨️ طباعة / PDF" data-en="🖨️ Print / PDF">🖨️ طباعة / PDF</button>
+        <button onclick="reshuffleExam()" class="bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-700 hover:to-sky-700 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="🔀 إعادة خلط الأسئلة" data-en="🔀 Reshuffle Questions">🔀 إعادة خلط الأسئلة</button>
+    </div>
+
+    <header class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md mb-8 border-r-4 border-cyan-600">
+        <div class="text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2" data-ar="➗ امتحان التعبيرات النسبية" data-en="➗ Rational Expressions Exam">➗ امتحان التعبيرات النسبية</h1>
+            <h2 class="text-lg text-cyan-600 font-semibold" data-ar="Rational Expressions" data-en="Rational Expressions">Rational Expressions</h2>
+            <p class="text-sm text-gray-600 mt-2" data-ar="أسئلة تغطي: تبسيط الكسور الجبرية، العمليات على التعبيرات النسبية، وحل المعادلات النسبية" data-en="Covers: Simplifying algebraic fractions, Operations with rational expressions, and Solving rational equations">أسئلة تغطي: تبسيط الكسور الجبرية، العمليات على التعبيرات النسبية، وحل المعادلات النسبية</p>
+            <p class="text-xs text-orange-600 mt-2 font-semibold" data-ar="⚠️ ملاحظة: يتم خلط ترتيب الأسئلة والخيارات تلقائياً مع كل تحديث للصفحة" data-en="⚠️ Note: Questions and options are randomly shuffled on every page refresh">⚠️ ملاحظة: يتم خلط ترتيب الأسئلة والخيارات تلقائياً مع كل تحديث للصفحة</p>
+        </div>
+        <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+            <span><span data-ar="📅 التاريخ:" data-en="📅 Date:">📅 التاريخ:</span> <input type="text" class="border-b border-gray-400 bg-transparent w-28 text-center"></span>
+            <span><span data-ar="👤 الاسم:" data-en="👤 Name:">👤 الاسم:</span> <input type="text" id="studentName" class="border-b border-gray-400 bg-transparent w-32 text-center" placeholder="Enter name"></span>
+            <span><span data-ar="🏫 الشعبة:" data-en="🏫 Class:">🏫 الشعبة:</span> <input type="text" id="studentClass" class="border-b border-gray-400 bg-transparent w-28 text-center" placeholder="Class"></span>
+            <span><span data-ar="⏱️ المدة: 60 دقيقة" data-en="⏱️ Duration: 60 min">⏱️ المدة: 60 دقيقة</span></span>
+            <span><span data-ar="📊 المجموع: 100 درجة" data-en="📊 Total: 100 pts">📊 المجموع: 100 درجة</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto space-y-8" id="exam-content"></main>
+
+    <div class="text-center no-print pb-8 mt-8">
+        <button onclick="gradeExam()" class="bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-700 hover:to-sky-700 text-white text-lg px-10 py-4 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📝 تسليم وتصحيح الامتحان" data-en="📝 Submit & Grade Exam">📝 تسليم وتصحيح الامتحان</button>
+    </div>
+
+    <div id="results-panel" class="max-w-4xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-2xl border-t-4 border-cyan-500 hidden no-print">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center" data-ar="📊 نتائج الامتحان" data-en="📊 Exam Results">📊 نتائج الامتحان</h2>
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-blue-50 p-4 rounded-xl text-center"><p data-ar="اسم الطالب" data-en="Student Name">اسم الطالب</p><p id="res-name" class="font-bold text-xl text-cyan-700">-</p></div>
+            <div class="bg-purple-50 p-4 rounded-xl text-center"><p data-ar="التاريخ" data-en="Date">التاريخ</p><p id="res-date" class="font-bold text-xl text-purple-700">-</p></div>
+            <div class="bg-cyan-50 p-4 rounded-xl text-center"><p data-ar="المجموع" data-en="Score">المجموع</p><p id="res-total" class="font-bold text-3xl text-cyan-600">0 / 100</p></div>
+        </div>
+        <div class="text-center mb-6">
+            <span id="success-badge" class="success-badge grade-excellent">-</span>
+            <p id="success-percent" class="text-4xl font-bold text-cyan-600 mt-2">100%</p>
+            <p class="text-sm text-gray-500" data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</p>
+        </div>
+        <div class="bg-gray-50 p-6 rounded-xl mb-6">
+            <h3 class="font-bold text-lg mb-4 text-gray-800" data-ar="📈 تفصيل الأداء حسب القسم:" data-en="📈 Performance Breakdown:">📈 تفصيل الأداء حسب القسم:</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="تبسيط الكسور الجبرية" data-en="Simplifying Algebraic Fractions">تبسيط الكسور الجبرية</span>
+                    <span id="sec1-score" class="font-bold text-cyan-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="ضرب وقسمة التعبيرات النسبية" data-en="Multiplying & Dividing Rational Expressions">ضرب وقسمة التعبيرات النسبية</span>
+                    <span id="sec2-score" class="font-bold text-cyan-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="جمع وطرح التعبيرات النسبية" data-en="Adding & Subtracting Rational Expressions">جمع وطرح التعبيرات النسبية</span>
+                    <span id="sec3-score" class="font-bold text-cyan-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="المعادلات النسبية" data-en="Rational Equations">المعادلات النسبية</span>
+                    <span id="sec4-score" class="font-bold text-cyan-600">0/4</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="مسائل SAT متقدمة" data-en="Advanced SAT Problems">مسائل SAT متقدمة</span>
+                    <span id="sec5-score" class="font-bold text-cyan-600">0/4</span>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mb-6">
+            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-cyan-600 to-sky-600 hover:from-cyan-700 hover:to-sky-700 text-white text-lg px-8 py-3 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📧 إرسال النتائج للمعلم" data-en="📧 Send Results to Teacher">📧 إرسال النتائج للمعلم</button>
+            <p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+        </div>
+        <div class="flex gap-3 justify-center">
+            <button onclick="window.print()" class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold" data-ar="🖨️ طباعة النتائج" data-en="🖨️ Print Results">🖨️ طباعة النتائج</button>
+        </div>
+    </div>
+
+    <footer class="max-w-4xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+        © <span data-ar="Rational Expressions" data-en="Rational Expressions">Rational Expressions</span> | Mr. Mohammed Hesham
+    </footer>
+
+<script>
+// ==================== EmailJS Settings ====================
+const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+const SERVICE_ID = "service_w15m64i";
+const TEMPLATE_ID = "template_5b0u2tq";
+const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+
+emailjs.init(PUBLIC_KEY);
+
+// ==================== SVG Visualizations for Rational Expressions ====================
+const svgGraphs = {
+    // Simplifying algebraic fractions
+    simplify_fraction: `<svg class="svg-graph" width="320" height="160" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="300" height="140" rx="8" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+        <text x="160" y="35" text-anchor="middle" font-size="15" fill="#0891b2" font-weight="bold">تبسيط الكسور الجبرية | Simplifying</text>
+        
+        <!-- Original fraction -->
+        <line x1="40" y1="75" x2="130" y2="75" stroke="#1f2937" stroke-width="1.5"/>
+        <text x="85" y="65" text-anchor="middle" font-size="16" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">x² − 9</text>
+        <text x="85" y="98" text-anchor="middle" font-size="16" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">x + 3</text>
+        
+        <!-- Arrow -->
+        <text x="155" y="82" text-anchor="middle" font-size="20" fill="#0891b2" font-weight="bold">→</text>
+        
+        <!-- Factored -->
+        <line x1="175" y1="75" x2="275" y2="75" stroke="#1f2937" stroke-width="1.5"/>
+        <text x="225" y="65" text-anchor="middle" font-size="14" fill="#6b7280" font-family="'Times New Roman', serif" font-style="italic">(x−3)(x+3)</text>
+        <text x="225" y="98" text-anchor="middle" font-size="14" fill="#6b7280" font-family="'Times New Roman', serif" font-style="italic">x + 3</text>
+        
+        <!-- Result -->
+        <text x="160" y="135" text-anchor="middle" font-size="18" fill="#059669" font-weight="bold" font-family="'Times New Roman', serif" font-style="italic">= x − 3  (x ≠ −3)</text>
+    </svg>`,
+    
+    // Domain restrictions warning
+    domain_warning: `<svg class="svg-graph" width="300" height="130" viewBox="0 0 300 130" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="280" height="110" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="150" y="35" text-anchor="middle" font-size="14" fill="#dc2626" font-weight="bold">⚠️ قيود المقام | Domain Restrictions</text>
+        <text x="150" y="65" text-anchor="middle" font-size="16" fill="#1f2937">المقام لا يساوي صفراً أبداً!</text>
+        <text x="150" y="90" text-anchor="middle" font-size="14" fill="#dc2626" font-family="'Times New Roman', serif" font-style="italic">إذا كان المقام (x + 3): x ≠ −3</text>
+        <text x="150" y="110" text-anchor="middle" font-size="13" fill="#6b7280">Denominator can never equal zero</text>
+    </svg>`,
+    
+    // Multiplying rational expressions
+    multiply_rational: `<svg class="svg-graph" width="320" height="140" viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="300" height="120" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <text x="160" y="35" text-anchor="middle" font-size="14" fill="#2563eb" font-weight="bold">ضرب الكسور | Multiplying Fractions</text>
+        <text x="160" y="65" text-anchor="middle" font-size="16" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">(a/b) × (c/d) = (a·c)/(b·d)</text>
+        <text x="160" y="95" text-anchor="middle" font-size="14" fill="#6b7280">البسط × البسط، والمقام × المقام</text>
+        <text x="160" y="115" text-anchor="middle" font-size="13" fill="#2563eb" font-family="'Times New Roman', serif" font-style="italic">(2x/3) × (9/x²) = 18x/3x² = 6/x</text>
+    </svg>`,
+    
+    // Dividing rational expressions
+    divide_rational: `<svg class="svg-graph" width="320" height="140" viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="300" height="120" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="160" y="35" text-anchor="middle" font-size="14" fill="#d97706" font-weight="bold">قسمة الكسور | Dividing Fractions</text>
+        <text x="160" y="65" text-anchor="middle" font-size="16" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">(a/b) ÷ (c/d) = (a/b) × (d/c)</text>
+        <text x="160" y="90" text-anchor="middle" font-size="13" fill="#6b7280">اضرب في مقلوب الكسر الثاني</text>
+        <text x="160" y="115" text-anchor="middle" font-size="13" fill="#d97706" font-weight="bold">Keep • Change • Flip</text>
+    </svg>`,
+    
+    // Common denominator
+    common_denominator: `<svg class="svg-graph" width="320" height="160" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="300" height="140" rx="8" fill="#e0e7ff" stroke="#6366f1" stroke-width="2"/>
+        <text x="160" y="35" text-anchor="middle" font-size="14" fill="#4338ca" font-weight="bold">المقام المشترك | Common Denominator</text>
+        
+        <line x1="40" y1="70" x2="90" y2="70" stroke="#1f2937" stroke-width="1.5"/>
+        <text x="65" y="60" text-anchor="middle" font-size="16" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">1</text>
+        <text x="65" y="93" text-anchor="middle" font-size="16" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">x</text>
+        
+        <text x="105" y="77" font-size="18" fill="#4338ca" font-weight="bold">+</text>
+        
+        <line x1="120" y1="70" x2="170" y2="70" stroke="#1f2937" stroke-width="1.5"/>
+        <text x="145" y="60" text-anchor="middle" font-size="16" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">2</text>
+        <text x="145" y="93" text-anchor="middle" font-size="16" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">y</text>
+        
+        <text x="195" y="77" font-size="18" fill="#4338ca" font-weight="bold">=</text>
+        
+        <line x1="215" y1="70" x2="290" y2="70" stroke="#1f2937" stroke-width="1.5"/>
+        <text x="252" y="60" text-anchor="middle" font-size="14" fill="#059669" font-family="'Times New Roman', serif" font-style="italic">y + 2x</text>
+        <text x="252" y="93" text-anchor="middle" font-size="14" fill="#059669" font-family="'Times New Roman', serif" font-style="italic">xy</text>
+        
+        <text x="160" y="130" text-anchor="middle" font-size="12" fill="#6b7280">المقام المشترك الأصغر: xy</text>
+    </svg>`,
+    
+    // Solving rational equations
+    solve_rational: `<svg class="svg-graph" width="320" height="180" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="300" height="160" rx="8" fill="#f3e8ff" stroke="#a855f7" stroke-width="2"/>
+        <text x="160" y="35" text-anchor="middle" font-size="14" fill="#7c3aed" font-weight="bold">حل المعادلات النسبية | Solving Rational Equations</text>
+        
+        <text x="30" y="65" font-size="14" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">3/(x − 1) = 2/x</text>
+        <text x="200" y="65" font-size="11" fill="#a855f7">المعادلة الأصلية</text>
+        
+        <text x="30" y="95" font-size="14" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">3x = 2(x − 1)</text>
+        <text x="200" y="95" font-size="11" fill="#a855f7">الضرب التبادلي</text>
+        
+        <text x="30" y="125" font-size="14" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">3x = 2x − 2</text>
+        <text x="200" y="125" font-size="11" fill="#a855f7">التوزيع</text>
+        
+        <text x="30" y="155" font-size="16" fill="#059669" font-weight="bold" font-family="'Times New Roman', serif" font-style="italic">x = −2 ✓</text>
+        <text x="200" y="155" font-size="11" fill="#059669" font-weight="bold">تحقق: x ≠ 0, 1</text>
+    </svg>`,
+    
+    // Cross multiplication
+    cross_multiply: `<svg class="svg-graph" width="300" height="150" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="280" height="130" rx="8" fill="#fce7f3" stroke="#db2777" stroke-width="2"/>
+        <text x="150" y="35" text-anchor="middle" font-size="14" fill="#be185d" font-weight="bold">الضرب التبادلي | Cross Multiplication</text>
+        
+        <line x1="60" y1="80" x2="120" y2="80" stroke="#1f2937" stroke-width="1.5"/>
+        <text x="90" y="70" text-anchor="middle" font-size="18" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">a</text>
+        <text x="90" y="103" text-anchor="middle" font-size="18" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">b</text>
+        
+        <text x="150" y="85" text-anchor="middle" font-size="20" fill="#db2777" font-weight="bold">=</text>
+        
+        <line x1="180" y1="80" x2="240" y2="80" stroke="#1f2937" stroke-width="1.5"/>
+        <text x="210" y="70" text-anchor="middle" font-size="18" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">c</text>
+        <text x="210" y="103" text-anchor="middle" font-size="18" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">d</text>
+        
+        <!-- Cross arrows -->
+        <path d="M 75 105 Q 150 140 225 65" stroke="#db2777" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+        <path d="M 105 65 Q 150 30 195 105" stroke="#db2777" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+        
+        <defs>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 z" fill="#db2777"/>
+            </marker>
+        </defs>
+        
+        <text x="150" y="130" text-anchor="middle" font-size="16" fill="#db2777" font-weight="bold" font-family="'Times New Roman', serif" font-style="italic">a·d = b·c</text>
+    </svg>`,
+    
+    // Work rate problem
+    work_rate: `<svg class="svg-graph" width="320" height="140" viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="300" height="120" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+        <text x="160" y="35" text-anchor="middle" font-size="14" fill="#065f46" font-weight="bold">مسائل معدل العمل | Work Rate Problems</text>
+        <text x="160" y="65" text-anchor="middle" font-size="15" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">1/t₁ + 1/t₂ = 1/t_total</text>
+        <text x="160" y="95" text-anchor="middle" font-size="12" fill="#6b7280">معدل الأول + معدل الثاني = المعدل الكلي</text>
+        <text x="160" y="115" text-anchor="middle" font-size="12" fill="#059669">إذا أنهى A العمل في 6 ساعات و B في 3 ساعات:</text>
+        <text x="160" y="132" text-anchor="middle" font-size="12" fill="#059669" font-weight="bold">1/6 + 1/3 = 1/2 ⟹ معاً ينهيان في ساعتين</text>
+    </svg>`,
+    
+    // Complex fractions
+    complex_fraction: `<svg class="svg-graph" width="300" height="150" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="280" height="130" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/>
+        <text x="150" y="35" text-anchor="middle" font-size="14" fill="#a16207" font-weight="bold">الكسور المركبة | Complex Fractions</text>
+        
+        <!-- Complex fraction structure -->
+        <line x1="70" y1="60" x2="140" y2="60" stroke="#1f2937" stroke-width="1"/>
+        <text x="105" y="52" text-anchor="middle" font-size="12" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">1 + 1/x</text>
+        
+        <line x1="50" y1="85" x2="160" y2="85" stroke="#1f2937" stroke-width="2"/>
+        
+        <line x1="70" y1="110" x2="140" y2="110" stroke="#1f2937" stroke-width="1"/>
+        <text x="105" y="105" text-anchor="middle" font-size="12" fill="#1f2937" font-family="'Times New Roman', serif" font-style="italic">x − 1</text>
+        
+        <text x="195" y="88" font-size="18" fill="#a16207" font-weight="bold">=</text>
+        
+        <line x1="220" y1="85" x2="280" y2="85" stroke="#1f2937" stroke-width="1.5"/>
+        <text x="250" y="75" text-anchor="middle" font-size="13" fill="#059669" font-family="'Times New Roman', serif" font-style="italic">x + 1</text>
+        <text x="250" y="105" text-anchor="middle" font-size="13" fill="#059669" font-family="'Times New Roman', serif" font-style="italic">x(x − 1)</text>
+    </svg>`,
+    
+    // Extraneous solutions in rational equations
+    extraneous_rational: `<svg class="svg-graph" width="320" height="140" viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="300" height="120" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+        <text x="160" y="35" text-anchor="middle" font-size="14" fill="#dc2626" font-weight="bold">⚠️ الحلول الغريبة | Extraneous Solutions</text>
+        <text x="160" y="65" text-anchor="middle" font-size="13" fill="#1f2937">عند حل معادلة نسبية، قد تظهر حلول تجعل المقام = 0</text>
+        <text x="160" y="90" text-anchor="middle" font-size="14" fill="#dc2626" font-weight="bold">يجب استبعادها دائماً!</text>
+        <text x="160" y="115" text-anchor="middle" font-size="12" fill="#6b7280" font-family="'Times New Roman', serif" font-style="italic">مثال: x = 1 في معادلة مقامها (x − 1) ⟹ حل غريب ✗</text>
+    </svg>`
+};
+
+const originalExamData = {
+    sections: [
+        {
+            id: 'sec1',
+            title: { ar: '🔹 الجزء الأول: تبسيط الكسور الجبرية', en: '🔹 Part 1: Simplifying Algebraic Fractions' },
+            questions: [
+                {
+                    q: { ar: 'بسّط: <span class="math-display">(x² − 9)/(x + 3)</span>', en: 'Simplify: <span class="math-display">(x² − 9)/(x + 3)</span>' },
+                    svg: svgGraphs.simplify_fraction,
+                    options: [
+                        { ar: '<span class="math-display">x − 3</span>', en: '<span class="math-display">x − 3</span>' },
+                        { ar: '<span class="math-display">x + 3</span>', en: '<span class="math-display">x + 3</span>' },
+                        { ar: '<span class="math-display">x − 9</span>', en: '<span class="math-display">x − 9</span>' },
+                        { ar: '<span class="math-display">(x − 3)²</span>', en: '<span class="math-display">(x − 3)²</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'بالتحليل: x² − 9 = (x − 3)(x + 3)، ثم نختصر (x + 3) من البسط والمقام، الناتج: x − 3', en: 'Factoring: x² − 9 = (x − 3)(x + 3), then cancel (x + 3), result: x − 3' }
+                },
+                {
+                    q: { ar: 'بسّط: <span class="math-display">(2x² + 6x)/(4x)</span>', en: 'Simplify: <span class="math-display">(2x² + 6x)/(4x)</span>' },
+                    options: [
+                        { ar: '<span class="math-display">(x + 3)/2</span>', en: '<span class="math-display">(x + 3)/2</span>' },
+                        { ar: '<span class="math-display">x + 3</span>', en: '<span class="math-display">x + 3</span>' },
+                        { ar: '<span class="math-display">(x + 6)/2</span>', en: '<span class="math-display">(x + 6)/2</span>' },
+                        { ar: '<span class="math-display">2x + 6</span>', en: '<span class="math-display">2x + 6</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'بإخراج العامل المشترك: 2x(x + 3)/4x = (x + 3)/2 بعد اختصار 2x', en: 'Factoring out: 2x(x + 3)/4x = (x + 3)/2 after canceling 2x' }
+                },
+                {
+                    q: { ar: 'ما القيم المستثناة (القيود) للكسر: <span class="math-display">(x + 5)/(x − 2)</span>؟', en: 'What are the restrictions for: <span class="math-display">(x + 5)/(x − 2)</span>?' },
+                    svg: svgGraphs.domain_warning,
+                    options: [
+                        { ar: '<span class="math-display">x ≠ 2</span>', en: '<span class="math-display">x ≠ 2</span>' },
+                        { ar: '<span class="math-display">x ≠ −5</span>', en: '<span class="math-display">x ≠ −5</span>' },
+                        { ar: '<span class="math-display">x ≠ 2</span> و <span class="math-display">x ≠ −5</span>', en: '<span class="math-display">x ≠ 2</span> and <span class="math-display">x ≠ −5</span>' },
+                        { ar: 'لا توجد قيود', en: 'No restrictions' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المقام لا يمكن أن يساوي صفراً: x − 2 ≠ 0 ⟹ x ≠ 2. البسط لا يؤثر على القيود', en: 'Denominator cannot be zero: x − 2 ≠ 0 ⟹ x ≠ 2. Numerator does not affect restrictions' }
+                },
+                {
+                    q: { ar: 'بسّط: <span class="math-display">(x² − 4x + 4)/(x − 2)</span>', en: 'Simplify: <span class="math-display">(x² − 4x + 4)/(x − 2)</span>' },
+                    options: [
+                        { ar: '<span class="math-display">x − 2</span>', en: '<span class="math-display">x − 2</span>' },
+                        { ar: '<span class="math-display">x + 2</span>', en: '<span class="math-display">x + 2</span>' },
+                        { ar: '<span class="math-display">(x − 2)²</span>', en: '<span class="math-display">(x − 2)²</span>' },
+                        { ar: '<span class="math-display">x − 4</span>', en: '<span class="math-display">x − 4</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'البسط مربع كامل: x² − 4x + 4 = (x − 2)²، ثم نختصر: (x − 2)²/(x − 2) = x − 2', en: 'Numerator is perfect square: x² − 4x + 4 = (x − 2)², then cancel: (x − 2)²/(x − 2) = x − 2' }
+                }
+            ]
+        },
+        {
+            id: 'sec2',
+            title: { ar: '🔹 الجزء الثاني: ضرب وقسمة التعبيرات النسبية', en: '🔹 Part 2: Multiplying & Dividing Rational Expressions' },
+            questions: [
+                {
+                    q: { ar: 'احسب: <span class="math-display">(2x/3) × (9/x²)</span>', en: 'Calculate: <span class="math-display">(2x/3) × (9/x²)</span>' },
+                    svg: svgGraphs.multiply_rational,
+                    options: [
+                        { ar: '<span class="math-display">6/x</span>', en: '<span class="math-display">6/x</span>' },
+                        { ar: '<span class="math-display">18x³</span>', en: '<span class="math-display">18x³</span>' },
+                        { ar: '<span class="math-display">6x</span>', en: '<span class="math-display">6x</span>' },
+                        { ar: '<span class="math-display">2/3x</span>', en: '<span class="math-display">2/3x</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '(2x × 9)/(3 × x²) = 18x/3x² = 6/x بعد الاختصار', en: '(2x × 9)/(3 × x²) = 18x/3x² = 6/x after simplifying' }
+                },
+                {
+                    q: { ar: 'احسب: <span class="math-display">(x² − 1)/(x + 2) ÷ (x − 1)/(x + 2)</span>', en: 'Calculate: <span class="math-display">(x² − 1)/(x + 2) ÷ (x − 1)/(x + 2)</span>' },
+                    svg: svgGraphs.divide_rational,
+                    options: [
+                        { ar: '<span class="math-display">x + 1</span>', en: '<span class="math-display">x + 1</span>' },
+                        { ar: '<span class="math-display">x − 1</span>', en: '<span class="math-display">x − 1</span>' },
+                        { ar: '<span class="math-display">(x + 1)²</span>', en: '<span class="math-display">(x + 1)²</span>' },
+                        { ar: '<span class="math-display">1</span>', en: '<span class="math-display">1</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'نضرب في المقلوب: [(x−1)(x+1)/(x+2)] × [(x+2)/(x−1)] = x + 1', en: 'Multiply by reciprocal: [(x−1)(x+1)/(x+2)] × [(x+2)/(x−1)] = x + 1' }
+                },
+                {
+                    q: { ar: 'بسّط: <span class="math-display">(x/(x − 1)) × ((x − 1)/x²)</span>', en: 'Simplify: <span class="math-display">(x/(x − 1)) × ((x − 1)/x²)</span>' },
+                    options: [
+                        { ar: '<span class="math-display">1/x</span>', en: '<span class="math-display">1/x</span>' },
+                        { ar: '<span class="math-display">x</span>', en: '<span class="math-display">x</span>' },
+                        { ar: '<span class="math-display">1/(x − 1)</span>', en: '<span class="math-display">1/(x − 1)</span>' },
+                        { ar: '<span class="math-display">x²</span>', en: '<span class="math-display">x²</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'نختصر (x − 1) و x: x(x−1)/[(x−1)x²] = 1/x', en: 'Cancel (x − 1) and x: x(x−1)/[(x−1)x²] = 1/x' }
+                },
+                {
+                    q: { ar: 'لقسمة كسرين جبريين، ماذا نفعل؟', en: 'To divide two algebraic fractions, what do we do?' },
+                    options: [
+                        { ar: 'نضرب في مقلوب الكسر الثاني', en: 'Multiply by the reciprocal of the second fraction' },
+                        { ar: 'نجمع البسوط والمقامات', en: 'Add numerators and denominators' },
+                        { ar: 'نطرح البسوط فقط', en: 'Subtract numerators only' },
+                        { ar: 'نقسم البسط على البسط والمقام على المقام', en: 'Divide numerator by numerator and denominator by denominator' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'قاعدة القسمة: (a/b) ÷ (c/d) = (a/b) × (d/c)، أي نضرب في المقلوب', en: 'Division rule: (a/b) ÷ (c/d) = (a/b) × (d/c), multiply by the reciprocal' }
+                }
+            ]
+        },
+        {
+            id: 'sec3',
+            title: { ar: '🔹 الجزء الثالث: جمع وطرح التعبيرات النسبية', en: '🔹 Part 3: Adding & Subtracting Rational Expressions' },
+            questions: [
+                {
+                    q: { ar: 'احسب: <span class="math-display">1/x + 2/x</span>', en: 'Calculate: <span class="math-display">1/x + 2/x</span>' },
+                    options: [
+                        { ar: '<span class="math-display">3/x</span>', en: '<span class="math-display">3/x</span>' },
+                        { ar: '<span class="math-display">3/x²</span>', en: '<span class="math-display">3/x²</span>' },
+                        { ar: '<span class="math-display">2/x²</span>', en: '<span class="math-display">2/x²</span>' },
+                        { ar: '<span class="math-display">1/x²</span>', en: '<span class="math-display">1/x²</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المقامات متشابهة، نجمع البسوط: (1 + 2)/x = 3/x', en: 'Same denominators, add numerators: (1 + 2)/x = 3/x' }
+                },
+                {
+                    q: { ar: 'احسب: <span class="math-display">1/x + 1/y</span>', en: 'Calculate: <span class="math-display">1/x + 1/y</span>' },
+                    svg: svgGraphs.common_denominator,
+                    options: [
+                        { ar: '<span class="math-display">(x + y)/(xy)</span>', en: '<span class="math-display">(x + y)/(xy)</span>' },
+                        { ar: '<span class="math-display">2/(x + y)</span>', en: '<span class="math-display">2/(x + y)</span>' },
+                        { ar: '<span class="math-display">2/(xy)</span>', en: '<span class="math-display">2/(xy)</span>' },
+                        { ar: '<span class="math-display">1/(xy)</span>', en: '<span class="math-display">1/(xy)</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المقام المشترك هو xy: y/(xy) + x/(xy) = (x + y)/(xy)', en: 'Common denominator is xy: y/(xy) + x/(xy) = (x + y)/(xy)' }
+                },
+                {
+                    q: { ar: 'بسّط: <span class="math-display">2/(x − 1) − 1/(x + 1)</span>', en: 'Simplify: <span class="math-display">2/(x − 1) − 1/(x + 1)</span>' },
+                    options: [
+                        { ar: '<span class="math-display">(x + 3)/((x − 1)(x + 1))</span>', en: '<span class="math-display">(x + 3)/((x − 1)(x + 1))</span>' },
+                        { ar: '<span class="math-display">1/((x − 1)(x + 1))</span>', en: '<span class="math-display">1/((x − 1)(x + 1))</span>' },
+                        { ar: '<span class="math-display">(x − 3)/((x − 1)(x + 1))</span>', en: '<span class="math-display">(x − 3)/((x − 1)(x + 1))</span>' },
+                        { ar: '<span class="math-display">3/(x² − 1)</span>', en: '<span class="math-display">3/(x² − 1)</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المقام المشترك (x−1)(x+1): [2(x+1) − (x−1)]/[(x−1)(x+1)] = (2x+2−x+1)/... = (x+3)/[(x−1)(x+1)]', en: 'Common denominator (x−1)(x+1): [2(x+1) − (x−1)]/[(x−1)(x+1)] = (x+3)/[(x−1)(x+1)]' }
+                },
+                {
+                    q: { ar: 'ما المقام المشترك الأصغر لـ: <span class="math-display">1/x²</span> و <span class="math-display">1/x³</span>؟', en: 'What is the LCD of: <span class="math-display">1/x²</span> and <span class="math-display">1/x³</span>?' },
+                    options: [
+                        { ar: '<span class="math-display">x³</span>', en: '<span class="math-display">x³</span>' },
+                        { ar: '<span class="math-display">x²</span>', en: '<span class="math-display">x²</span>' },
+                        { ar: '<span class="math-display">x⁵</span>', en: '<span class="math-display">x⁵</span>' },
+                        { ar: '<span class="math-display">x⁶</span>', en: '<span class="math-display">x⁶</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'المقام المشترك الأصغر هو أكبر قوة: x³', en: 'The LCD is the highest power: x³' }
+                }
+            ]
+        },
+        {
+            id: 'sec4',
+            title: { ar: '🔹 الجزء الرابع: المعادلات النسبية', en: '🔹 Part 4: Rational Equations' },
+            questions: [
+                {
+                    q: { ar: 'حل المعادلة: <span class="math-display">2/x = 6</span>', en: 'Solve: <span class="math-display">2/x = 6</span>' },
+                    svg: svgGraphs.solve_rational,
+                    options: [
+                        { ar: '<span class="math-display">x = 1/3</span>', en: '<span class="math-display">x = 1/3</span>' },
+                        { ar: '<span class="math-display">x = 3</span>', en: '<span class="math-display">x = 3</span>' },
+                        { ar: '<span class="math-display">x = 12</span>', en: '<span class="math-display">x = 12</span>' },
+                        { ar: '<span class="math-display">x = −3</span>', en: '<span class="math-display">x = −3</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'بضرب الطرفين في x: 2 = 6x، إذن x = 2/6 = 1/3', en: 'Multiply both sides by x: 2 = 6x, so x = 2/6 = 1/3' }
+                },
+                {
+                    q: { ar: 'حل: <span class="math-display">3/(x − 1) = 2/x</span>', en: 'Solve: <span class="math-display">3/(x − 1) = 2/x</span>' },
+                    svg: svgGraphs.cross_multiply,
+                    options: [
+                        { ar: '<span class="math-display">x = −2</span>', en: '<span class="math-display">x = −2</span>' },
+                        { ar: '<span class="math-display">x = 2</span>', en: '<span class="math-display">x = 2</span>' },
+                        { ar: '<span class="math-display">x = 1</span>', en: '<span class="math-display">x = 1</span>' },
+                        { ar: '<span class="math-display">x = −1</span>', en: '<span class="math-display">x = −1</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'بالضرب التبادلي: 3x = 2(x − 1) ⟹ 3x = 2x − 2 ⟹ x = −2. التحقق: x ≠ 0, 1 ✓', en: 'Cross multiply: 3x = 2(x − 1) ⟹ 3x = 2x − 2 ⟹ x = −2. Check: x ≠ 0, 1 ✓' }
+                },
+                {
+                    q: { ar: 'حل: <span class="math-display">x/4 = 3/2</span>', en: 'Solve: <span class="math-display">x/4 = 3/2</span>' },
+                    options: [
+                        { ar: '<span class="math-display">x = 6</span>', en: '<span class="math-display">x = 6</span>' },
+                        { ar: '<span class="math-display">x = 3/2</span>', en: '<span class="math-display">x = 3/2</span>' },
+                        { ar: '<span class="math-display">x = 8</span>', en: '<span class="math-display">x = 8</span>' },
+                        { ar: '<span class="math-display">x = 12</span>', en: '<span class="math-display">x = 12</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'بالضرب التبادلي: 2x = 12، إذن x = 6', en: 'Cross multiply: 2x = 12, so x = 6' }
+                },
+                {
+                    q: { ar: 'حل: <span class="math-display">5/(x + 2) = 1</span>', en: 'Solve: <span class="math-display">5/(x + 2) = 1</span>' },
+                    options: [
+                        { ar: '<span class="math-display">x = 3</span>', en: '<span class="math-display">x = 3</span>' },
+                        { ar: '<span class="math-display">x = 5</span>', en: '<span class="math-display">x = 5</span>' },
+                        { ar: '<span class="math-display">x = −3</span>', en: '<span class="math-display">x = −3</span>' },
+                        { ar: '<span class="math-display">x = 7</span>', en: '<span class="math-display">x = 7</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'بضرب الطرفين في (x + 2): 5 = x + 2، إذن x = 3. التحقق: x ≠ −2 ✓', en: 'Multiply both sides by (x + 2): 5 = x + 2, so x = 3. Check: x ≠ −2 ✓' }
+                }
+            ]
+        },
+        {
+            id: 'sec5',
+            title: { ar: '🔹 الجزء الخامس: مسائل SAT متقدمة', en: '🔹 Part 5: Advanced SAT Problems' },
+            questions: [
+                {
+                    q: { ar: 'إذا كان <span class="math-display">(x + 2)/(x − 1) = 3</span>، فما قيمة x؟', en: 'If <span class="math-display">(x + 2)/(x − 1) = 3</span>, what is the value of x?' },
+                    options: [
+                        { ar: '<span class="math-display">x = 5/2</span>', en: '<span class="math-display">x = 5/2</span>' },
+                        { ar: '<span class="math-display">x = 2</span>', en: '<span class="math-display">x = 2</span>' },
+                        { ar: '<span class="math-display">x = 1</span>', en: '<span class="math-display">x = 1</span>' },
+                        { ar: '<span class="math-display">x = 3</span>', en: '<span class="math-display">x = 3</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'بالضرب في (x−1): x + 2 = 3(x − 1) ⟹ x + 2 = 3x − 3 ⟹ 5 = 2x ⟹ x = 5/2', en: 'Multiply by (x−1): x + 2 = 3(x − 1) ⟹ x + 2 = 3x − 3 ⟹ 5 = 2x ⟹ x = 5/2' }
+                },
+                {
+                    q: { ar: 'إذا كان بإمكان الآلة A إنجاز عمل في 6 ساعات والآلة B في 3 ساعات، فكم يستغرقان معاً؟', en: 'If machine A completes a job in 6 hours and machine B in 3 hours, how long do they take together?' },
+                    svg: svgGraphs.work_rate,
+                    options: [
+                        { ar: '<span class="math-display">2</span> ساعة', en: '<span class="math-display">2</span> hours' },
+                        { ar: '<span class="math-display">4.5</span> ساعة', en: '<span class="math-display">4.5</span> hours' },
+                        { ar: '<span class="math-display">9</span> ساعات', en: '<span class="math-display">9</span> hours' },
+                        { ar: '<span class="math-display">3</span> ساعات', en: '<span class="math-display">3</span> hours' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '1/6 + 1/3 = 1/6 + 2/6 = 3/6 = 1/2، إذن t = 2 ساعة', en: '1/6 + 1/3 = 1/6 + 2/6 = 3/6 = 1/2, so t = 2 hours' }
+                },
+                {
+                    q: { ar: 'بسّط الكسر المركب: <span class="math-display">(1 + 1/x)/(x − 1)</span>', en: 'Simplify the complex fraction: <span class="math-display">(1 + 1/x)/(x − 1)</span>' },
+                    svg: svgGraphs.complex_fraction,
+                    options: [
+                        { ar: '<span class="math-display">(x + 1)/(x(x − 1))</span>', en: '<span class="math-display">(x + 1)/(x(x − 1))</span>' },
+                        { ar: '<span class="math-display">(x + 1)/(x − 1)</span>', en: '<span class="math-display">(x + 1)/(x − 1)</span>' },
+                        { ar: '<span class="math-display">1/(x − 1)</span>', en: '<span class="math-display">1/(x − 1)</span>' },
+                        { ar: '<span class="math-display">x/(x − 1)</span>', en: '<span class="math-display">x/(x − 1)</span>' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'البسط: 1 + 1/x = (x + 1)/x. ثم نقسم: [(x+1)/x]/(x−1) = (x+1)/(x(x−1))', en: 'Numerator: 1 + 1/x = (x + 1)/x. Then divide: [(x+1)/x]/(x−1) = (x+1)/(x(x−1))' }
+                },
+                {
+                    q: { ar: 'حل: <span class="math-display">x/(x − 2) = 4/(x − 2)</span>. ما الحل؟', en: 'Solve: <span class="math-display">x/(x − 2) = 4/(x − 2)</span>. What is the solution?' },
+                    svg: svgGraphs.extraneous_rational,
+                    options: [
+                        { ar: '<span class="math-display">x = 4</span>', en: '<span class="math-display">x = 4</span>' },
+                        { ar: '<span class="math-display">x = 2</span>', en: '<span class="math-display">x = 2</span>' },
+                        { ar: '<span class="math-display">x = 4</span> و <span class="math-display">x = 2</span>', en: '<span class="math-display">x = 4</span> and <span class="math-display">x = 2</span>' },
+                        { ar: 'لا يوجد حل', en: 'No solution' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'بالمساواة: x = 4. التحقق: x ≠ 2 (لأن المقام يصبح صفراً)، إذن x = 4 حل صحيح', en: 'Equating: x = 4. Check: x ≠ 2 (denominator becomes zero), so x = 4 is valid' }
+                }
+            ]
+        }
+    ]
+};
+
+function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+let examData;
+let correctAnswersMap = {};
+let currentLang = 'ar';
+let timeRemaining = 3600;
+let timerInterval;
+
+function prepareShuffledExam() {
+    examData = JSON.parse(JSON.stringify(originalExamData));
+    correctAnswersMap = {};
+    let globalIdx = 0;
+    
+    examData.sections.forEach((section) => {
+        section.questions = shuffleArray(section.questions);
+        
+        section.questions.forEach((q) => {
+            const optionsWithCorrect = q.options.map((opt, idx) => ({
+                option: opt,
+                isCorrect: idx === q.correct
+            }));
+            
+            const shuffledOptions = shuffleArray(optionsWithCorrect);
+            q.options = shuffledOptions.map(o => o.option);
+            
+            const newCorrectIndex = shuffledOptions.findIndex(o => o.isCorrect);
+            q.correct = newCorrectIndex;
+            
+            correctAnswersMap[globalIdx] = String.fromCharCode(97 + newCorrectIndex);
+            globalIdx++;
+        });
+    });
+    
+    console.log('✅ تم خلط الأسئلة والخيارات بنجاح');
+}
+
+function reshuffleExam() {
+    prepareShuffledExam();
+    renderExam();
+    document.querySelectorAll('input[type="radio"]:checked').forEach(r => r.checked = false);
+    document.getElementById('results-panel').classList.add('hidden');
+    document.querySelectorAll('.correct, .incorrect').forEach(el => {
+        el.classList.remove('correct', 'incorrect');
+    });
+    alert(currentLang === 'ar' 
+        ? '🔀 تم إعادة خلط الأسئلة والخيارات بنجاح!' 
+        : '🔀 Questions and options have been reshuffled successfully!');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    
+    document.body.classList.toggle('en-mode', lang === 'en');
+    
+    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+        const arContent = el.getAttribute('data-ar');
+        const enContent = el.getAttribute('data-en');
+        if (arContent && enContent) {
+            el.innerHTML = lang === 'ar' ? arContent : enContent;
+        }
+    });
+    
+    renderExam();
+}
+
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = {
+        ar: { option: ['أ', 'ب', 'ج', 'د'], answer: '✅ الإجابة:' },
+        en: { option: ['A', 'B', 'C', 'D'], answer: '✅ Answer:' }
+    };
+    const lbl = labels[currentLang];
+    const isRTL = currentLang === 'ar';
+    
+    let html = '';
+    let globalIdx = 0;
+    
+    examData.sections.forEach((section) => {
+        html += `
+        <section class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-xl font-bold mb-4 text-cyan-700">${section.title[currentLang]}</h2>
+            <ol class="space-y-4 text-sm">`;
+            
+        section.questions.forEach((q) => {
+            const borderSide = isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4';
+            html += `
+                <li class="${borderSide} border-cyan-500 py-2" id="q-${globalIdx}">
+                    <strong>${globalIdx + 1}.</strong> ${q.q[currentLang]}<br>`;
+            
+            if (q.svg) {
+                html += `<div class="graph-container">${q.svg}</div>`;
+            }
+                    
+            q.options.forEach((opt, oIdx) => {
+                const radioSide = isRTL ? 'mr-4 ml-2' : 'ml-4 mr-2';
+                html += `
+                    <label class="cursor-pointer block mt-1 ${isRTL ? 'mr-4' : 'ml-4'}">
+                        <input type="radio" name="q${globalIdx}" value="${String.fromCharCode(97 + oIdx)}" class="${radioSide}"> 
+                        ${lbl.option[oIdx]}) ${opt[currentLang]}
+                    </label>`;
+            });
+            
+            html += `
+                    <div class="answer-box text-green-700 mt-2 font-medium hidden">
+                        ${lbl.answer} ${lbl.option[q.correct]}) ${q.options[q.correct][currentLang]} — ${q.answer[currentLang]}
+                    </div>
+                </li>`;
+            globalIdx++;
+        });
+        
+        html += `
+            </ol>
+        </section>`;
+    });
+    
+    container.innerHTML = html;
+}
+
+function startTimer() {
+    document.getElementById('timer-container').style.display = 'block';
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        if (timeRemaining <= 300) timerEl.classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? "انتهى الوقت! سيتم تسليم الامتحان تلقائياً." : "Time's up! Exam will be submitted automatically.");
+            gradeExam();
+        }
+    }, 1000);
+}
+
+function toggleAnswers() {
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden'));
+}
+
+function gradeExam() {
+    let correctCount = 0;
+    let sec1 = 0, sec2 = 0, sec3 = 0, sec4 = 0, sec5 = 0;
+    
+    for (let i = 0; i < 20; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const li = document.getElementById(`q-${i}`);
+        const correctAnswer = correctAnswersMap[i];
+        
+        if (li) {
+            const isCorrect = selected && selected.value === correctAnswer;
+            
+            if (isCorrect) {
+                correctCount++;
+                li.classList.add('correct');
+                li.classList.remove('incorrect');
+                
+                if (i < 4) sec1++;
+                else if (i < 8) sec2++;
+                else if (i < 12) sec3++;
+                else if (i < 16) sec4++;
+                else sec5++;
+            } else {
+                li.classList.add('incorrect');
+                li.classList.remove('correct');
+            }
+        }
+    }
+
+    const score = (correctCount / 20) * 100;
+    const successRate = Math.round(score);
+    
+    document.getElementById('res-total').textContent = `${Math.round(score)} / 100`;
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'طالب' : 'Student');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    
+    document.getElementById('sec1-score').textContent = `${sec1}/4`;
+    document.getElementById('sec2-score').textContent = `${sec2}/4`;
+    document.getElementById('sec3-score').textContent = `${sec3}/4`;
+    document.getElementById('sec4-score').textContent = `${sec4}/4`;
+    document.getElementById('sec5-score').textContent = `${sec5}/4`;
+    
+    const badge = document.getElementById('success-badge');
+    const percent = document.getElementById('success-percent');
+    percent.textContent = `${successRate}%`;
+    
+    if (currentLang === 'ar') {
+        if (successRate >= 90) { badge.textContent = 'ممتاز'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'جيد جداً'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'جيد'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'يحتاج تحسين'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (successRate >= 90) { badge.textContent = 'Excellent'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'Very Good'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'Good'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'Needs Improvement'; badge.className = 'success-badge grade-fail'; }
+    }
+    
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('sendEmailBtn').classList.remove('hidden');
+}
+
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '📤 Sending...';
+
+    const name = document.getElementById('studentName').value || 'N/A';
+    const studentClass = document.getElementById('studentClass').value || 'N/A';
+    const date = document.querySelector('input[type="text"]').value || new Date().toLocaleDateString();
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+    const badge = document.getElementById('success-badge').textContent;
+
+    const sectionNames = {
+        ar: ['تبسيط الكسور الجبرية', 'ضرب وقسمة التعبيرات النسبية', 'جمع وطرح التعبيرات النسبية', 'المعادلات النسبية', 'مسائل SAT متقدمة'],
+        en: ['Simplifying Algebraic Fractions', 'Multiplying & Dividing Rational Expressions', 'Adding & Subtracting Rational Expressions', 'Rational Equations', 'Advanced SAT Problems']
+    };
+    const currentSectionNames = sectionNames[currentLang];
+
+    let answersHTML = `
+        <div style="font-family: 'Segoe UI', Tahoma, Arial, sans-serif; direction: ${currentLang === 'ar' ? 'rtl' : 'ltr'};">
+            <div style="background: linear-gradient(135deg, #0891b2, #0ea5e9); color: white; padding: 20px; border-radius: 10px 10px 0 0; text-align: center;">
+                <h2 style="margin: 0; font-size: 22px;">➗ ${currentLang === 'ar' ? 'نتيجة امتحان التعبيرات النسبية' : 'Rational Expressions Exam Result'}</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">${currentLang === 'ar' ? 'Rational Expressions' : 'Rational Expressions'}</p>
+                <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.8;">🔀 ${currentLang === 'ar' ? 'تم خلط الأسئلة تلقائياً' : 'Questions were randomly shuffled'}</p>
+            </div>
+            
+            <div style="background: #ecfeff; padding: 15px; border: 1px solid #a5f3fc;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold; color: #155e75;">${currentLang === 'ar' ? '👤 الاسم:' : '👤 Name:'}</td>
+                        <td style="padding: 8px;">${name}</td>
+                        <td style="padding: 8px; font-weight: bold; color: #155e75;">${currentLang === 'ar' ? '🏫 الشعبة:' : '🏫 Class:'}</td>
+                        <td style="padding: 8px;">${studentClass}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; font-weight: bold; color: #155e75;">${currentLang === 'ar' ? '📅 التاريخ:' : '📅 Date:'}</td>
+                        <td style="padding: 8px;">${date}</td>
+                        <td style="padding: 8px; font-weight: bold; color: #155e75;">${currentLang === 'ar' ? '🏆 التقدير:' : '🏆 Grade:'}</td>
+                        <td style="padding: 8px;">${badge}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="background: white; padding: 20px; text-align: center; border-bottom: 2px solid #e5e7eb;">
+                <div style="display: inline-block; margin: 0 15px;">
+                    <div style="font-size: 32px; font-weight: bold; color: #0891b2;">${score}</div>
+                    <div style="color: #6b7280; font-size: 13px;">${currentLang === 'ar' ? 'الدرجة الكلية' : 'Total Score'}</div>
+                </div>
+                <div style="display: inline-block; margin: 0 15px;">
+                    <div style="font-size: 32px; font-weight: bold; color: #059669;">${successRate}%</div>
+                    <div style="color: #6b7280; font-size: 13px;">${currentLang === 'ar' ? 'نسبة النجاح' : 'Success Rate'}</div>
+                </div>
+            </div>
+
+            <h3 style="background: #f3f4f6; padding: 12px; margin: 0; color: #1f2937; border-bottom: 2px solid #d1d5db;">
+                📝 ${currentLang === 'ar' ? 'تفاصيل الإجابات' : 'Answer Details'}
+            </h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <thead>
+                    <tr style="background: #0891b2; color: white;">
+                        <th style="padding: 10px; border: 1px solid #0e7490; width: 8%;">#</th>
+                        <th style="padding: 10px; border: 1px solid #0e7490; width: 32%;">${currentLang === 'ar' ? 'القسم' : 'Section'}</th>
+                        <th style="padding: 10px; border: 1px solid #0e7490; width: 15%;">${currentLang === 'ar' ? 'الإجابة' : 'Answer'}</th>
+                        <th style="padding: 10px; border: 1px solid #0e7490; width: 15%;">${currentLang === 'ar' ? 'الصحيحة' : 'Correct'}</th>
+                        <th style="padding: 10px; border: 1px solid #0e7490; width: 15%;">${currentLang === 'ar' ? 'النتيجة' : 'Status'}</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    let sectionScores = [0, 0, 0, 0, 0];
+    let sectionTotals = [4, 4, 4, 4, 4];
+
+    for (let i = 0; i < 20; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const selectedValue = selected ? selected.value : '-';
+        const correctValue = correctAnswersMap[i];
+        const isCorrect = selectedValue === correctValue;
+        
+        const sectionIndex = Math.floor(i / 4);
+        if (isCorrect) sectionScores[sectionIndex]++;
+
+        const rowBg = i % 2 === 0 ? '#f9fafb' : '#ffffff';
+        const statusBg = isCorrect ? '#dcfce7' : '#fee2e2';
+        const statusColor = isCorrect ? '#166534' : '#991b1b';
+        const statusIcon = isCorrect ? '✅' : '❌';
+        const statusText = isCorrect 
+            ? (currentLang === 'ar' ? 'صحيح' : 'Correct') 
+            : (currentLang === 'ar' ? 'خطأ' : 'Wrong');
+
+        answersHTML += `
+            <tr style="background: ${rowBg};">
+                <td style="padding: 8px; border: 1px solid #e5e7eb; text-align: center; font-weight: bold;">${i + 1}</td>
+                <td style="padding: 8px; border: 1px solid #e5e7eb;">${currentSectionNames[sectionIndex]}</td>
+                <td style="padding: 8px; border: 1px solid #e5e7eb; text-align: center; font-weight: bold;">${selectedValue.toUpperCase()}</td>
+                <td style="padding: 8px; border: 1px solid #e5e7eb; text-align: center; font-weight: bold; color: #059669;">${correctValue.toUpperCase()}</td>
+                <td style="padding: 8px; border: 1px solid #e5e7eb; text-align: center; background: ${statusBg}; color: ${statusColor}; font-weight: bold;">
+                    ${statusIcon} ${statusText}
+                </td>
+            </tr>
+        `;
+    }
+
+    answersHTML += `
+                </tbody>
+            </table>
+
+            <h3 style="background: #f3f4f6; padding: 12px; margin: 0; color: #1f2937; border-bottom: 2px solid #d1d5db; border-top: 3px solid #0891b2;">
+                📊 ${currentLang === 'ar' ? 'تفصيل الأداء' : 'Performance Breakdown'}
+            </h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <thead>
+                    <tr style="background: #0ea5e9; color: white;">
+                        <th style="padding: 10px; border: 1px solid #0284c7;">${currentLang === 'ar' ? 'القسم' : 'Section'}</th>
+                        <th style="padding: 10px; border: 1px solid #0284c7; width: 20%;">${currentLang === 'ar' ? 'النتيجة' : 'Score'}</th>
+                        <th style="padding: 10px; border: 1px solid #0284c7; width: 20%;">${currentLang === 'ar' ? 'النسبة' : 'Percentage'}</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    for (let i = 0; i < 5; i++) {
+        const percentage = Math.round((sectionScores[i] / sectionTotals[i]) * 100);
+        const barColor = percentage >= 75 ? '#10b981' : percentage >= 50 ? '#f59e0b' : '#ef4444';
+        const rowBg = i % 2 === 0 ? '#f9fafb' : '#ffffff';
+        
+        answersHTML += `
+            <tr style="background: ${rowBg};">
+                <td style="padding: 10px; border: 1px solid #e5e7eb; font-weight: 600;">${currentSectionNames[i]}</td>
+                <td style="padding: 10px; border: 1px solid #e5e7eb; text-align: center; font-weight: bold; color: #0891b2;">
+                    ${sectionScores[i]} / ${sectionTotals[i]}
+                </td>
+                <td style="padding: 10px; border: 1px solid #e5e7eb;">
+                    <div style="background: #e5e7eb; border-radius: 10px; overflow: hidden; height: 20px; position: relative;">
+                        <div style="background: ${barColor}; width: ${percentage}%; height: 100%;"></div>
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 11px; font-weight: bold; color: #1f2937;">
+                            ${percentage}%
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+
+    answersHTML += `
+                </tbody>
+            </table>
+
+            <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 15px; border-radius: 0 0 10px 10px; border-top: 2px solid #f59e0b;">
+                <p style="margin: 0; color: #78350f; text-align: center; font-size: 13px;">
+                    💡 <strong>${currentLang === 'ar' ? 'ملاحظة:' : 'Note:'}</strong> 
+                    ${currentLang === 'ar' 
+                        ? 'تم إرسال هذا التقرير تلقائياً من منصة 4U التعليمية | Mr. Mohammed Hesham' 
+                        : 'This report was automatically sent from 4U Educational Platform | Mr. Mohammed Hesham'}
+                </p>
+            </div>
+        </div>
+    `;
+
+    const templateParams = {
+        to_email: TARGET_EMAIL,
+        student_name: name,
+        student_class: studentClass,
+        exam_date: date,
+        total_score: score,
+        success_rate: successRate,
+        grade: badge,
+        answers_table: answersHTML
+    };
+
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+        .then(() => {
+            status.textContent = currentLang === 'ar' 
+                ? '✅ تم إرسال النتائج بنجاح!' 
+                : '✅ Results sent successfully!';
+            status.style.color = '#059669';
+            btn.textContent = currentLang === 'ar' ? '✓ تم الإرسال' : '✓ Sent';
+        })
+        .catch(err => {
+            status.textContent = currentLang === 'ar' 
+                ? '❌ فشل الإرسال، حاول مرة أخرى' 
+                : '❌ Failed to send, try again';
+            status.style.color = '#dc2626';
+            btn.disabled = false;
+            btn.textContent = currentLang === 'ar' ? '📧 إعادة المحاولة' : '📧 Retry Send';
+            console.error('EmailJS Error:', err);
+        });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    prepareShuffledExam();
+    renderExam();
+    startTimer();
+    console.log('🔀 تم خلط الأسئلة والخيارات عشوائياً!');
+});
+</script>
+</body>
+</html>
